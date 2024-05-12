@@ -1,45 +1,55 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
 
 # Define UI for application that draws a histogram
 fluidPage(
-
-    # Application title
-    titlePanel("What affects sleep quality?"),
-    
-
-    
-    
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(width=2,
-          selectInput("disorder_filter",
-                      "Exclude Sleep Disorder:",
-                      choices = unique(owad_data1$Sleep.Disorder),
-                      multiple = TRUE),
-          selectInput("occupation_filter", "Exclude Occupation:",
-                      choices = unique(heatmap_data$Occupation),
-                      multiple = TRUE),
-          checkboxInput("show_trend","Show trends?",value=TRUE)
-        ),
-        
-        
-
-        # Show a plot of the generated distribution
-        mainPanel(width=10,
-          fluidRow(column(6, plotOutput("linePlot")),
-                   column(6, plotOutput("scatterPlot"))),
-          
-          fluidRow(column(6, plotOutput("barPlot")),
-                   column(6, plotOutput("heatMap")))
-        )
+  
+  # Header
+  fluidRow(
+    column(
+      width = 4,
+      headerPanel(title = "What affects sleep quality?")
+    ),
+    column(
+      width = 2,
+      selectInput("occupation_filter", "Exclude Occupation:",
+                  choices = unique(heatmap_data$Occupation),
+                  multiple = TRUE)
+    ),
+    column(
+      width = 2,
+      selectInput("disorder_filter", "Exclude Sleep Disorder:",
+                  choices = unique(owad_data1$Sleep.Disorder),
+                  multiple = TRUE)
+    ),
+    column(
+      width = 1,
+      sliderInput("quality_filter", "Sleep Quality",
+                  min = 0, max = 10, value = c(0, 10),
+                  step = 1)
+    ),
+    column(
+      width = 2,
+      sliderInput("age_filter", "Age",
+                  min = min(owad_data1$Age), max = max(owad_data1$Age), value = c(min(owad_data1$Age), max(owad_data1$Age)),
+                  step = 1)
+    ),
+    column(
+      width = 1,
+      checkboxInput("show_trend", "Show trends?", value = TRUE)
     )
+  ),
+  
+  # Main content area
+  mainPanel(width = 12,
+            column(5,
+                   plotOutput("linePlot", height = "200px"),
+                   plotOutput("scatterPlot", height = "450px")
+            ),
+            column(3,
+                   plotOutput("barPlot", height = "650px")
+            ),
+            column(4,
+                   plotOutput("heatMap", height = "650px")
+            )
+  )
 )

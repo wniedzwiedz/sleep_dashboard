@@ -6,7 +6,9 @@ function(input, output, session) {
   filtered_owad_data <- reactive({
     filtered_data <- owad_data %>%
       filter(!Occupation %in% input$occupation_filter,
-             !Sleep.Disorder %in% input$disorder_filter)
+             !Sleep.Disorder %in% input$disorder_filter,
+             Age >= input$age_filter[1] & Age <= input$age_filter[2],
+             Quality.of.Sleep >= input$quality_filter[1] & Quality.of.Sleep <= input$quality_filter[2])
     
     return(filtered_data)
   })
@@ -50,11 +52,13 @@ function(input, output, session) {
   
   output$linePlot <- renderPlot({
     line_plot_data() %>% 
-      ggplot(aes(x = Age, y = Quality.of.Sleep, color = Quality.of.Sleep,size = Observations)) +
+      ggplot(aes(x = Age, y = Quality.of.Sleep, color = Quality.of.Sleep)) +
       geom_line() +
-      scale_colour_gradient2(low = "red", mid = "yellow", high = "darkgreen", midpoint = mean(line_plot_data()$Quality.of.Sleep))
+      scale_colour_gradient(low = "red", high = "lightgreen") +
+      theme(legend.position = "none")
   })
-
+  
+  
   output$barPlot <- renderPlot({
     bar_plot_data() %>% 
       ggplot(aes(x = Occupation, y = Quality.of.Sleep, fill = Occupation)) +
@@ -88,10 +92,10 @@ function(input, output, session) {
   
   output$heatMap <- renderPlot({
     heatmap_data() %>%
-      ggplot(aes(x = factor(Quality.of.Sleep), y = Occupation, fill = n)) +
+      ggplot(aes(x = factor(Quality.of.Sleep), y = factor(Occupation, levels = sort(unique(Occupation), decreasing = TRUE)), fill = n)) +
       geom_tile() +
       scale_fill_gradient(low = "lightblue", high = "darkblue") +
       labs(x = "Sleep Quality", y = "Occupation", fill = "Count") +
-      theme(panel.grid = element_blank()) 
+      theme(panel.grid = element_blank(), legend.position = "none") 
   })
 }
