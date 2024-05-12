@@ -3,6 +3,14 @@ library(shiny)
 # Define UI for application that draws a histogram
 fluidPage(
   
+  tags$head(
+    tags$style(HTML("
+      body {
+        background-color: #c5d4d9;
+      }
+    "))
+  ),
+  
   # Header
   fluidRow(
     column(

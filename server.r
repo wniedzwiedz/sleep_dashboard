@@ -54,7 +54,7 @@ function(input, output, session) {
     line_plot_data() %>% 
       ggplot(aes(x = Age, y = Quality.of.Sleep, color = Quality.of.Sleep)) +
       geom_line() +
-      scale_colour_gradient(low = "red", high = "lightgreen") +
+      scale_colour_gradient(low = "red", high = "forestgreen") +
       theme(legend.position = "none")
   })
   
@@ -80,7 +80,8 @@ function(input, output, session) {
       facet_wrap(~Sleep.Disorder, scales = "free", ncol = 1) +
       labs(x = "Physical Activity Level", y = "Sleep Quality") +
       scale_alpha_continuous(range = c(0.1, 1)) +  # Adjust the range of opacity
-      theme_minimal()  # Apply a minimal theme for better clarity
+      theme_minimal()+
+      theme(legend.position = "none")
   
   
   if (input$show_trend) {
