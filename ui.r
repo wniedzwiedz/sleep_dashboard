@@ -51,7 +51,8 @@ fluidPage(
   mainPanel(width = 12,
             column(5,
                    plotOutput("linePlot", height = "200px"),
-                   plotOutput("scatterPlot", height = "450px")
+                   br(),
+                   plotOutput("scatterPlot", height = "430px")
             ),
             column(3,
                    plotOutput("barPlot", height = "650px")

@@ -55,6 +55,7 @@ function(input, output, session) {
       ggplot(aes(x = Age, y = Quality.of.Sleep, color = Quality.of.Sleep)) +
       geom_line() +
       scale_colour_gradient(low = "red", high = "forestgreen") +
+      theme_minimal()+
       theme(legend.position = "none")
   })
   
@@ -97,6 +98,6 @@ function(input, output, session) {
       geom_tile() +
       scale_fill_gradient(low = "lightblue", high = "darkblue") +
       labs(x = "Sleep Quality", y = "Occupation", fill = "Count") +
-      theme(panel.grid = element_blank(), legend.position = "none") 
+      theme(panel.grid = element_blank()) 
   })
 }
