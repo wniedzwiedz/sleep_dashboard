@@ -27,9 +27,9 @@ fluidPage(
     ),
     column(
       width = 2,
-      selectInput("disorder_filter", "Exclude Sleep Disorder:",
+      selectInput("disorder_filter", "Sleep Disorder:",
                   choices = unique(owad_data$Sleep.Disorder),
-                  multiple = TRUE)
+                  multiple = TRUE, selected = unique(owad_data$Sleep.Disorder))
     ),
     column(
       width = 1,
@@ -45,22 +45,24 @@ fluidPage(
     ),
     column(
       width = 1,
+      actionButton("reset_filters", "Reset Filters"),
       checkboxInput("show_trend", "Show trends?", value = TRUE)
+      
     )
   ),
   
   # Main content area
   mainPanel(width = 12,
             column(5,
-                   plotOutput("linePlot", height = "200px", brush = brushOpts(id = "linePlot_brush")),
+                   plotOutput("linePlot", height = "200px", brush = brushOpts(id = "linePlot_brush"), click = "linePlot_click"),
                    br(),
-                   plotOutput("scatterPlot", height = "430px", brush = brushOpts(id = "scatterPlot_brush"))
+                   plotOutput("scatterPlot", height = "430px", brush = brushOpts(id = "scatterPlot_brush"), click = "scatterPlot_click")
             ),
             column(3,
-                   plotOutput("barPlot", height = "650px", click = "barPlot_click")
+                   plotOutput("barPlot", height = "650px", click = "barPlot_click", brush = brushOpts(id = "barPlot_brush"))
             ),
             column(4,
-                   plotOutput("heatMap", height = "650px", click = "heatMap_click")
+                   plotOutput("heatMap", height = "650px", click = "heatMap_click", brush = brushOpts(id = "heatMap_brush"))
             )
   )
 )

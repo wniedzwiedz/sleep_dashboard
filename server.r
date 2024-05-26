@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   filtered_owad_data <- reactive({
     owad_data %>%
       filter(!Occupation %in% input$occupation_filter,
-             !Sleep.Disorder %in% input$disorder_filter,
+             Sleep.Disorder %in% input$disorder_filter,
              Age >= input$age_filter[1] & Age <= input$age_filter[2],
              Quality.of.Sleep >= input$quality_filter[1] & Quality.of.Sleep <= input$quality_filter[2])
   })
@@ -111,6 +111,92 @@ server <- function(input, output, session) {
       updateSliderInput(session, "age_filter", value = c(min_age, max_age))
       
     }
+    session$resetBrush("linePlot_brush")
   })
+  
+  observeEvent(input$linePlot_click, {
+    
+    updateSliderInput(session, "age_filter", value = c(min(owad_data$Age), max(owad_data$Age)))
+
+  })
+  
+  update_disorder_filter <- function(clicked_disorder) {
+    updateSelectInput(session, "disorder_filter", selected = clicked_disorder)
+  }
+  
+  observeEvent(input$scatterPlot_brush, {
+    brushed <- brushedPoints(scatter_data(), input$scatterPlot_brush)
+    if (nrow(brushed) > 0) {
+      min <- min(brushed$Quality.of.Sleep, na.rm = TRUE)
+      max <- max(brushed$Quality.of.Sleep, na.rm = TRUE)
+      updateSliderInput(session, "quality_filter", value = c(min, max))
+      clicked_disorder <- brushed$Sleep.Disorder
+      update_disorder_filter(clicked_disorder)
+      
+      
+    }
+    session$resetBrush("scatterPlot_brush")
+  })
+  
+  observeEvent(input$scatterPlot_click, {
+    
+    updateSliderInput(session, "quality_filter", value = c(0,10))
+    update_disorder_filter(unique(owad_data$Sleep.Disorder))
+    
+  })
+  
+  # General function to update occupation filter based on clicked occupation
+  update_occupation_filter <- function(clicked_occupation) {
+    current_filter <- input$occupation_filter
+    
+    # Add occupation 
+    new_filter <- c(clicked_occupation,current_filter)
+    
+    updateSelectInput(session, "occupation_filter", selected = new_filter)
+  }
+  
+  
+  
+  # Update occupation filter based on heatmap brush
+  observeEvent(input$heatMap_brush, {
+    info <- input$heatMap_brush
+    if (!is.null(info)) {
+      brushed_data <- brushedPoints(heatmap_data(), info, xvar = "Quality.of.Sleep", yvar = "Occupation")
+      if (nrow(brushed_data) > 0) {
+        min <- min(brushed_data$Quality.of.Sleep, na.rm = TRUE)
+        max <- max(brushed_data$Quality.of.Sleep, na.rm = TRUE)
+        updateSliderInput(session, "quality_filter", value = c(min, max))
+        clicked_occupations <- brushed_data$Occupation
+        update_occupation_filter(clicked_occupations)
+
+      }
+    }
+    session$resetBrush("heatMap_brush")
+  })
+  
+  # Update occupation filter based on heatmap brush
+  observeEvent(input$barPlot_brush, {
+    info <- input$barPlot_brush
+    if (!is.null(info)) {
+      brushed_data <- brushedPoints(heatmap_data(), info, xvar = "Quality.of.Sleep", yvar = "Occupation")
+      if (nrow(brushed_data) > 0) {
+        clicked_occupations <- brushed_data$Occupation
+        update_occupation_filter(clicked_occupations)
+        
+      }
+    }
+    session$resetBrush("barPlot_brush")
+  })
+  
+  
+  
+  observeEvent(input$reset_filters, {
+    # Reset all filter inputs to their default values or empty
+    updateSelectInput(session, "occupation_filter", selected = "none")
+    updateSelectInput(session, "disorder_filter", selected = unique(owad_data$Sleep.Disorder))
+    updateSliderInput(session, "age_filter", value = c(min(owad_data$Age), max(owad_data$Age)))
+    updateSliderInput(session, "quality_filter", value = c(0, 10))
+  })
+
   
 }
