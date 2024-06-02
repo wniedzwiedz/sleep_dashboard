@@ -7,7 +7,7 @@ server <- function(input, output, session) {
   # Reactive expression to filter data based on input
   filtered_owad_data <- reactive({
     owad_data %>%
-      filter(!Occupation %in% input$occupation_filter,
+      filter(Occupation %in% input$occupation_filter,
              Sleep.Disorder %in% input$disorder_filter,
              Age >= input$age_filter[1] & Age <= input$age_filter[2],
              Quality.of.Sleep >= input$quality_filter[1] & Quality.of.Sleep <= input$quality_filter[2])
@@ -120,6 +120,19 @@ server <- function(input, output, session) {
 
   })
   
+  observeEvent(input$heatMap_click, {
+    
+    updateSelectInput(session, "occupation_filter", selected = unique(owad_data$Occupation))
+    updateSliderInput(session, "quality_filter", value = c(0, 10))
+    
+  })
+  
+  observeEvent(input$barPlot_click, {
+    
+    updateSelectInput(session, "occupation_filter", selected = unique(owad_data$Occupation))
+    
+  })
+  
   update_disorder_filter <- function(clicked_disorder) {
     updateSelectInput(session, "disorder_filter", selected = clicked_disorder)
   }
@@ -147,14 +160,13 @@ server <- function(input, output, session) {
   
   # General function to update occupation filter based on clicked occupation
   update_occupation_filter <- function(clicked_occupation) {
-    current_filter <- input$occupation_filter
-    
-    # Add occupation 
-    new_filter <- c(clicked_occupation,current_filter)
-    
-    updateSelectInput(session, "occupation_filter", selected = new_filter)
+    new_filter <- c(clicked_occupation)
+    if (!is.null(new_filter)) {
+      updateSelectInput(session, "occupation_filter", selected = new_filter)
+    }
   }
   
+
   
   
   # Update occupation filter based on heatmap brush
@@ -192,7 +204,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$reset_filters, {
     # Reset all filter inputs to their default values or empty
-    updateSelectInput(session, "occupation_filter", selected = "none")
+    updateSelectInput(session, "occupation_filter", selected = unique(owad_data$Occupation))
     updateSelectInput(session, "disorder_filter", selected = unique(owad_data$Sleep.Disorder))
     updateSliderInput(session, "age_filter", value = c(min(owad_data$Age), max(owad_data$Age)))
     updateSliderInput(session, "quality_filter", value = c(0, 10))
