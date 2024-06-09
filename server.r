@@ -186,11 +186,11 @@ server <- function(input, output, session) {
     session$resetBrush("heatMap_brush")
   })
   
-  # Update occupation filter based on heatmap brush
+  # Update occupation filter based on barplot brush
   observeEvent(input$barPlot_brush, {
     info <- input$barPlot_brush
     if (!is.null(info)) {
-      brushed_data <- brushedPoints(heatmap_data(), info, xvar = "Quality.of.Sleep", yvar = "Occupation")
+      brushed_data <- brushedPoints(bar_plot_data(), info, xvar = "Quality.of.Sleep", yvar = "Occupation")
       if (nrow(brushed_data) > 0) {
         clicked_occupations <- brushed_data$Occupation
         update_occupation_filter(clicked_occupations)
