@@ -92,14 +92,14 @@ fluidPage(
           inline = TRUE)
     ),
     column(
-      width = 2,
+      width = 1,
       div(class = "filter-title", "Selected disorders:"),
       div(class = "select-input", checkboxGroupInput("disorder_filter", "",
                                                      choices = unique(owad_data$Sleep.Disorder),
                                                      selected = unique(owad_data$Sleep.Disorder)))
     ),
     column(
-      width = 1,
+      width = 2,
       div(class = "slider-input", sliderInput("quality_filter", "Sleep Quality",
                                               min = 0, max = 10, value = c(0, 10),
                                               step = 1))
